@@ -1,0 +1,57 @@
+---
+title: "Exercise_01"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny    
+---
+
+```{r setup, include=FALSE}
+  # Assignment: Factor out the head(cars, input$nrows) so
+  # that the code isn't duplicated and the operation isn't
+  # performed twice for each change to input$nrows.
+
+library(flexdashboard)
+```
+
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+```{r}
+numericInput("nrows", "Number of rows", 10, max = 50)
+```
+
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Table A
+
+```{r}
+renderTable({
+    head(cars, input$nrows)
+  })
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+renderPlot({
+    plot(head(cars, input$nrows))
+})
+```
+
+### Chart C
+
+```{r}
+renderPlot({
+    hist(head(cars$speed, input$nrows))
+})
+```
+
+

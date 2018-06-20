@@ -1,0 +1,79 @@
+---
+title: "Exercise_02"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny    
+---
+
+
+
+```{r setup, include=FALSE}
+
+  # Assignment: Remove duplication of `selected` and `model`
+  # code/calculations.
+
+library(flexdashboard)
+```
+
+
+Sidebar {.sidebar}
+=======================================================================
+
+```{r}
+selectInput("xcol", "X variable", names(iris))
+selectInput("ycol", "Y variable", names(iris), names(iris)[2])
+numericInput("rows", "Rows to show", 10)
+
+
+# solution:
+# add two reactive functions for selected and model
+
+selected <- reactive({
+    iris[, c(input$xcol, input$ycol)]
+})
+
+model <- reactive({
+    lm(paste(input$ycol, "~", input$xcol), selected())
+})
+
+```
+
+
+Data
+=======================================================================
+
+```{r}
+renderTable({
+    head(selected(), input$rows)
+  })
+```
+
+
+
+Summary
+=======================================================================
+
+```{r}
+renderPrint({
+    summary(model())
+  })
+
+renderPrint({
+    summary(selected())
+  })
+```
+
+
+
+Plot
+=======================================================================
+
+```{r}
+renderPlot({
+    plot(selected())
+    abline(model())
+  })
+```
+

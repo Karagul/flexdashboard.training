@@ -1,0 +1,351 @@
+---
+title: "Basic Stats"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+runtime: shiny
+---
+
+Sidebar {.sidebar}
+=====================================
+
+```{r}
+# R:\r-shiny\shiny-mini-apps\jalapic-shinyapps\basicstats
+
+library(grid)
+library(reshape2)
+library(ggplot2)
+library(compete)
+library(shiny)
+library(dplyr)
+
+# shiny inputs defined here
+textInput("text", label = h5("Set seed number (type any integer):"), value = "101")
+textInput("text1", label = h5("Number of permutations:"), value = "1000")
+```
+
+Student T-tests
+===========================
+
+Row
+--------------
+
+### Group A filters {data-width=400}
+
+```{r}
+sliderInput("slider1", h5("Sample size - group A:"), 0, 100, 10, sep = "")
+textInput("textxA", label = h5("Mean:"), value = "12")
+textInput("textsdA", label = h5("Standard Deviation:"), value = "4.2")
+```
+
+### Group B filters {data-width=400}
+
+```{r}
+sliderInput("slider2", h5("Sample size - group B:"), 0, 100, 10, sep = "")
+textInput("textxB", label = h5("Mean:"), value = "11")
+textInput("textsdB", label = h5("Standard Deviation:"), value = "6.7")
+```
+
+```{r}
+mydf <- reactive({
+    set.seed(as.numeric(input$text))
+       
+    A <-  rnorm(as.numeric(input$slider1), as.numeric(input$textxA), 
+                as.numeric(input$textsdA))
+    
+    B <-  rnorm(as.numeric(input$slider2), as.numeric(input$textxB),
+                 as.numeric(input$textsdB))
+        
+    mydf <- data.frame(
+          values = c(A,B),
+          group =  c(rep("A", as.numeric(input$slider1)), 
+                     rep("B", as.numeric(input$slider2))))    
+})
+
+
+mydf1 <- reactive({
+    set.seed(as.numeric(input$text))
+
+    A <- rnorm(1000, as.numeric(input$textxA), as.numeric(input$textsdA))  
+    B <- rnorm(1000, as.numeric(input$textxB), as.numeric(input$textsdB))
+    
+    res <- NULL
+    for(i in 4:1000){
+        res[[i]]  <- t.test(A[1:i], B[1:i])[[3]][[1]]
+    }
+    
+    mydf1 <- data.frame(
+      values = res,
+      n =  1:1000
+    )
+    
+  })
+```
+
+### Boxplots {data-width=600}
+
+```{r}
+renderPlot({
+    ggplot(mydf(), aes(group, values)) +
+      geom_boxplot(aes(x=group, values, color=group, fill=group), alpha=0.1) +
+      geom_point(aes(color=group, size=3)) +
+      scale_color_manual(values=c("dodgerblue", "darkorange")) +
+      scale_fill_manual(values=c("dodgerblue", "darkorange"))
+  })
+
+```
+
+
+### T-test results {data-width=300}
+```{r}
+output$text3 <- renderUI({
+    
+    mydf <- as.data.frame(mydf())
+    x <- split(mydf$values, mydf$group)
+    
+    Group_As <- x[[1]]
+    Group_Bs <- x[[2]]
+    
+    obj <-  t.test(Group_As, Group_Bs)
+
+    
+    HTML(
+      paste0("t = ", round(obj[[1]],3), '<br/>', 
+             "df = ", round(obj[[2]],3), '<br/>',
+             "p-value = ", round(obj[[3]],5), '<br/>',
+             '<br/>',
+             "95% CI min t = ", round(obj[[4]][[1]],2), '<br/>',
+             "95% CI max t = ", round(obj[[4]][[2]],2), '<br/>')
+  )
+    
+    
+  })
+htmlOutput("text3")
+```
+
+
+
+
+
+
+Row
+-----------
+
+### Exploring Student T-tests {data-width=300}
+Change the sample size, means and standard deviations of two groups (A & B) on the right hand size. The boxplot shows the distribution of the two groups and the T-test results window lists the outcome of an independent Student's T-test. On the bottom row, the middle panel shows the results of performing a randomized t-test. The first panel on the bottom row represents rolling p-values if adding one observation at a time to equal samples from each group. The seed can be fixed using the left-hand sidebar (e.g. compare 101 to 10!).
+
+### Rolling p-values when successively adding observations:
+```{r}
+output$plotX <- renderPlot({
+    
+    ggplot(mydf1(), aes(n, values)) + 
+      geom_point(size=1) +
+      geom_line() +
+      ylim(0,1) +
+      xlim(0,1000) +
+      geom_hline(yintercept=0.05, color="red", lwd=1, lty=2) +
+      ylab("p-value") +
+      xlab("sample size (assumes equal by group)") +
+      ggtitle("Discuss...") +
+      theme(plot.title = element_text(hjust=0,vjust=1, size=rel(1.4)))
+    
+    
+  })
+
+plotOutput("plotX", height = 250)
+```
+
+
+### Randomized T-tests:
+```{r}
+output$plotY <- renderPlot({
+    
+    
+    mydf <- as.data.frame(mydf())
+
+    ax <- split(mydf, mydf$group)[[1]][[1]]
+    bx <- split(mydf, mydf$group)[[2]][[1]]
+    
+    tstatobs <- t.test(ax,bx)[[1]][[1]]
+
+    
+    
+
+    
+gett <-  function(df) { 
+
+  df1 <- data.frame(values = df$values, group = sample(df$group))
+
+  ax <- split(df1, df1$group)[[1]][[1]]
+  bx <- split(df1, df1$group)[[2]][[1]]
+  
+  tstat <- t.test(ax,bx)[[1]][[1]]
+  return(tstat)
+  
+}
+
+nperms <- as.numeric(input$text1)
+
+myres <-  replicate(nperms, gett(mydf))
+myresdf <- data.frame(results = myres)
+
+toright <- round(sum(myres >= tstatobs) / nperms, 3)*100
+
+
+my_grob = grobTree(textGrob(paste0("t >= observed t  = ", toright, "%"),  x=0.6,  y=0.95, hjust=0, vjust=0,
+                            gp=gpar(col="navy", fontsize=12, fontface="italic")))
+
+    
+ggplot(myresdf, aes(results)) + 
+      geom_bar(color="black", fill="gray89") +
+      geom_vline(xintercept=tstatobs, color="red", lwd=1, lty=2) +
+      ylab("Frequency") +
+      xlab("Simulated values of t") +
+      ggtitle("Red line = observed t-statistic") +
+      theme(plot.title = element_text(color="red", hjust=0,vjust=1, size=rel(1.2))) +
+      annotation_custom(my_grob)
+    
+    
+  })
+
+plotOutput("plotY", height = 250)
+```
+
+
+
+
+
+One-Way ANOVA
+===========================
+
+Row
+--------------
+
+### Group Metrics {data-width=300}
+```{r}
+textInput(inputId="an", label="A - n", value = 12)
+textInput(inputId="amean", label=" mean", value = 11.3)
+textInput(inputId="asd", label="  sd", value = 4.5)
+textInput(inputId="bn", label="B - n", value = 14)
+textInput(inputId="bmean", label=" mean", value = 10.5)
+textInput(inputId="bsd", label="  sd", value = 3.8)
+textInput(inputId="cn", label="C - n", value = 10)
+textInput(inputId="cmean", label=" mean", value = 13.3)
+textInput(inputId="csd", label="  sd", value = 7.1)
+```
+
+
+### Boxplots {data-width=600}
+```{r}
+andf <- reactive({
+  
+  set.seed(as.numeric(input$text))
+  
+  
+  
+  A <-  rnorm(as.numeric(input$an), as.numeric(input$amean), as.numeric(input$asd))
+  B <-  rnorm(as.numeric(input$bn), as.numeric(input$bmean), as.numeric(input$bsd))
+  C <-  rnorm(as.numeric(input$cn), as.numeric(input$cmean), as.numeric(input$csd))
+  
+  andf <- data.frame(
+    values = c(A,B,C),
+    group =  c(rep("A", as.numeric(input$an)), 
+               rep("B", as.numeric(input$bn)),
+               rep("C", as.numeric(input$cn))
+               )
+               )
+})
+
+  
+output$plotA <- renderPlot({
+  
+  ggplot(andf(), aes(group, values)) + 
+    geom_boxplot(aes(x=group, values, color=group, fill=group), alpha=0.1) + 
+    geom_point(aes(color=group, size=3)) +
+    scale_color_manual(values=c("dodgerblue", "darkorange", "orangered4")) +
+    scale_fill_manual(values=c("dodgerblue", "darkorange", "orangered4"))
+  
+})
+
+plotOutput("plotA", height=250)
+```
+
+
+### One-Way ANOVA results {data-width=300}
+```{r}
+output$text4 <- renderUI({
+  andf <- as.data.frame(andf())  
+  obj <- oneway.test(values ~ group, andf)
+
+  HTML(
+      paste0("(Applies Welch's Correction)", '<br/>',
+             "F = ", round(obj[[1]][[1]],3), '<br/>', 
+             "num df = ", round(obj[[2]][[1]],2), '<br/>',
+             "denom df = ", round(obj[[2]][[2]],2), '<br/>',
+             "p-value = ", round(obj[[3]][[1]],4), '<br/>',
+             '<br/>'
+             )
+    )
+  })
+
+htmlOutput("text4")
+```
+
+
+
+
+Row
+-----------
+
+### Exploring One-Way ANOVAs {data-width=350}
+In this tab, enter the sample size, mean and standard deviation of each of the three groups on the right. The data are ploted in the boxplots panel and the results of a One-Way Anova (applying Welch's correction) are in the results panel. Results for pairwise-comparisons are shown on the bottom row. Plots are differences based on Tukey multiple comparisons of means 95% family-wise confidence level. Also shown are multiple pairwise comparisons of p' values adjusted using Holm's method.
+
+### Tukey Comparison Plots {data-width=600}
+```{r}
+output$plotB <- renderPlot({
+  
+  andf <- as.data.frame(andf())
+  results = aov(values ~ group, andf)
+  obj <- TukeyHSD(results, conf.level = 0.95)
+  
+  obj1 <- as.data.frame.matrix(obj$group)
+  dfx <- data.frame(x = rownames(obj1),  y = c(obj1[,2],obj1[,3]))
+  dfy <- data.frame(x1 = rownames(obj1), y1 = obj1[,1])
+  
+  ggplot(dfx, aes(x, y)) + 
+    geom_point(size = 4) + 
+    geom_point(aes(x1, y1), color = "red", fill="red", size=5, shape=17, data=dfy) +
+    geom_line(aes(group = x), lwd=1) + 
+    geom_hline(yintercept=0, color="red", lwd=1, lty=2) +
+    ylab("Difference") +
+    xlab("Comparison") +
+    theme(axis.text.x=element_text(angle=90, size=rel(1.5)))
+    
+})
+
+plotOutput("plotB", height=250)
+```
+
+
+### Pairwise Comparisons Results: {data-width=300}
+```{r}
+output$text5 <- renderUI({
+  andf <- as.data.frame(andf())
+  obj <-  pairwise.t.test(andf$values, andf$group, p.adjust.method="holm")
+
+  HTML(
+      paste0("(P adjust method = holm's)", '<br/>',
+             "A vs B: p= ", round(obj$p.value[[1]],3), '<br/>',
+             "A vs C: p= ", round(obj$p.value[[2]],3), '<br/>',
+             "B vs C: p= ", round(obj$p.value[[4]],3), '<br/>',
+             '<br/>'
+      )
+    )
+})
+
+htmlOutput("text5")
+```
+
+
+

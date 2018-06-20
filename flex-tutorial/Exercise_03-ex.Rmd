@@ -1,0 +1,49 @@
+---
+title: "Exercise_03"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny    
+---
+
+
+
+```{r setup, include=FALSE}
+    
+    # Assignment: Add logic so that when the "save" button
+    # is pressed, the data is saved to a CSV file called
+    # "data.csv" in the current directory.
+
+library(flexdashboard)
+```
+
+
+Sidebar {.sidebar}
+--------------------------------------------------------------
+
+```{r}
+numericInput("nrows", "Number of rows", 10)
+actionButton("save", "Save")
+```
+
+```{r}
+df <- reactive({
+    head(cars, input$nrows)
+})
+```
+
+
+Column
+-----------------------------------------------------------
+
+```{r}
+renderPlot({
+    plot(df())
+    })
+
+renderTable({
+    df()
+})
+```
+

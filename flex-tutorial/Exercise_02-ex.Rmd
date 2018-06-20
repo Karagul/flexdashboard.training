@@ -1,0 +1,82 @@
+---
+title: "Exercise_02"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny    
+---
+
+
+
+```{r setup, include=FALSE}
+# Assignment: Remove duplication of `selected` and `model`
+# code/calculations.
+
+library(flexdashboard)
+```
+
+
+Sidebar {.sidebar}
+=======================================================================
+
+```{r}
+selectInput("xcol", "X variable", names(iris))
+selectInput("ycol", "Y variable", names(iris), names(iris)[2])
+numericInput("rows", "Rows to show", 10)
+
+```
+
+
+Data
+=======================================================================
+
+```{r}
+renderTable({
+    selected <- iris[, c(input$xcol, input$ycol)]
+    head(selected, input$rows)
+  })
+```
+
+
+
+Summary
+=======================================================================
+
+```{r}
+    # Assignment: Remove duplication of `selected` and `model`
+    # code/calculations.
+
+renderPrint({
+
+    selected <- iris[, c(input$xcol, input$ycol)]
+    model <- lm(paste(input$ycol, "~", input$xcol), selected)
+    summary(model)
+  })
+
+
+renderPrint({
+    selected <- iris[, c(input$xcol, input$ycol)]
+    summary(selected)
+  })
+```
+
+
+
+Plot
+=======================================================================
+
+```{r}
+    # Assignment: Remove duplication of `selected` and `model`
+    # code/calculations.
+
+renderPlot({
+    
+    selected <- iris[, c(input$xcol, input$ycol)]
+    model <- lm(paste(input$ycol, "~", input$xcol), selected)
+    
+    plot(selected)
+    abline(model)
+  })
+```
+

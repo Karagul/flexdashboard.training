@@ -1,0 +1,145 @@
+---
+title: "Predictive Maintenance Demo"
+output: 
+  flexdashboard::flex_dashboard:
+    theme: flatly
+    logo: codecentric-logo.png
+    favicon: codecentric-logo.png
+    social: menu
+    source_code: embed
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+# library(flexdashboard) # dashboard
+# library(readr)         # read_csv
+# library(tidyverse)     # tidy analysis & ggplot
+# 
+# library(rProsper)
+# 
+# pserver <- OpenServer()
+# ret_code <- start_prosper(pserver)
+# 
+# 
+# # set location of the GAP model
+# model_dir      <- system.file("models", package = "rProsper")
+# model_name     <- "T33-GLQL_CSENS-3OP_SS.Out"
+# model_filename <- paste(model_dir, model_name, sep = "/")
+# 
+# # open the GAP model
+# open_prosper_model(pserver, model_filename)
+# 
+# # show some data from the string
+# read_basic_data(pserver)
+
+# shutdown_prosper(pserver)
+```
+
+Machine Learning {data-icon="fa-search"}
+=======================================================================
+
+Column {data-width=500}
+-----------------------------------------------------------------------
+
+### Prosper Single String
+
+
+
+
+### ROC curve
+
+```{r}
+# renderPlot({
+#   data.frame(x = perf_2@x.values[[1]],
+#            y = perf_2@y.values[[1]]) %>%
+#   ggplot(aes(x = x, y = y)) +
+#     geom_line() +
+#     theme_bw() +
+#   labs(x = "False positive rate",
+#        y = "True positive rate")
+# })
+```
+
+Column {data-width=300}
+-----------------------------------------------------------------------
+
+### Prediction of chosen test case
+
+```{r}
+# renderTable({
+#   test_performance %>%
+#     .[num(), ] %>%
+#     t() %>%
+#     as.data.frame() %>%
+#     rownames_to_column() %>%
+#     rename(metric = rowname,
+#            value = V1)
+# })
+```
+
+### Performance metrics and model type
+
+```{r}
+# renderTable(perf)
+```
+
+### Confusion matrix
+
+```{r}
+# renderPrint({
+#   confusion_matrix
+# })
+```
+
+Column {data-width=200}
+-----------------------------------------------------------------------
+
+### Fail score of test case {.gauge}
+
+```{r}
+# renderGauge({
+#   gauge(round(as.numeric(test_performance[num(), "pred"]) * 100, digits = 2), min = 0, max = 100, symbol = '%', 
+#       gaugeSectors(danger = c(90, 100), warning = c(50, 89), success = c(0, 50)))
+# })
+```
+
+### Accuracy {.value-box}
+
+```{r}
+# renderValueBox({
+# valueBox(round(accuracy, digits = 3), icon = "fa-check", caption = "Accuracy of ML model on test set", color = "danger")
+# })
+```
+
+### Misclassification rate {.value-box}
+
+```{r}
+# renderValueBox({
+# valueBox(round(misclassification_rate, digits = 3), icon = "fa-check-circle", caption = "Misclassification rate", color = "primary")
+# })
+```
+
+### Recall {.value-box}
+
+```{r}
+# renderValueBox({
+# valueBox(round(recall, digits = 3), icon = "fa-check-circle-o", caption = "Recall", color = "primary")
+# })
+```
+
+### Precision {.value-box}
+
+```{r}
+# renderValueBox({
+# valueBox(round(precision, digits = 3), icon = "fa-check-square", caption = "Precision", color = "primary")
+# })
+```
+
+### Null Error Rate {.value-box}
+
+```{r}
+# renderValueBox({
+# valueBox(round(null_error_rate, digits = 3), icon = "fa-check-square-o", caption = "Null Error Rate", color = "primary")
+# })
+```
+

@@ -1,0 +1,51 @@
+---
+title: "Example 04"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny     
+---
+
+```{r setup, include=FALSE}
+
+    # Assignment: When "rnorm" button is clicked, the plot should
+    # show a new batch of rnorm(100). When "runif" button is clicked,
+    # the plot should show a new batch of runif(100).
+
+    # Solution:
+    # add      
+    #    v <- reactiveValues(data = runif(100))
+    # in order to create an environment variable visible to observeEvent 
+    # and renderPlot.
+
+library(flexdashboard)
+```
+
+
+
+```{r}
+actionButton("rnorm", "Normal")
+actionButton("runif", "Uniform")
+```
+
+```{r}
+v <- reactiveValues(data = runif(100))
+
+
+observeEvent(input$rnorm, {
+    v$data <- rnorm(100)
+})
+
+observeEvent(input$runif, {
+    v$data <- runif(100)
+})
+```
+
+
+```{r}
+renderPlot({
+    hist(v$data)
+})    
+```
+

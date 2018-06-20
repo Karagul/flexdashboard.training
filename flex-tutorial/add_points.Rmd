@@ -1,0 +1,46 @@
+---
+title: "Exercise 05"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny       
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+
+
+```{r}
+# rv <- reactiveValues(userPoint = NULL)
+# 
+# observeEvent(input$click, {
+#     if (!is.null(input$click)) {
+#         rv$userPoint <- data.frame(speed = input$click$x, dist = input$click$y)  
+#     }
+# })
+```
+
+
+```{r}
+plotOutput("plot1", click = clickOpts(id = "plot_click"))
+
+output$plot1 <- renderPlot({
+  mtc <- mtcars[, c("wt", "mpg")]
+  
+  if (!is.null(input$plot_click)) {
+    df <- data.frame(wt = input$plot_click$x,
+                    mpg = input$plot_click$y)
+    
+    mtc <- rbind(
+      mtc, 
+      df)
+  }
+  print(df)
+  plot(mtc$wt, mtc$mpg)
+})
+
+```
+

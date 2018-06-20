@@ -1,0 +1,83 @@
+---
+title: "plotlyLinkedClick"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny         
+---
+
+```{r setup, include=FALSE}
+# R:\r-shiny\shiny-mini-apps\cpsievert-apps\shiny\apps\plotlyLinkedClick
+library(flexdashboard)
+library(shiny)
+library(plotly)
+
+# compute a correlation matrix
+correlation <- round(cor(mtcars), 3)
+nms <- names(mtcars)
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+```{r}
+output$heat <- renderPlotly({
+    plot_ly(x = nms, y = nms, z = correlation, 
+            key = correlation, type = "heatmap") %>%
+      layout(xaxis = list(title = ""), 
+             yaxis = list(title = ""))
+  })
+
+output$selection <- renderPrint({
+    s <- event_data("plotly_click")
+    if (length(s) == 0) {
+      "Click on a cell in the heatmap to display a scatterplot"
+    } else {
+      cat("You selected: \n\n")
+      as.list(s)
+    }
+  })
+  
+output$scatterplot <- renderPlotly({
+    s <- event_data("plotly_click")
+    if (length(s)) {
+      vars <- c(s[["x"]], s[["y"]])
+      d <- setNames(mtcars[vars], c("x", "y"))
+      yhat <- fitted(lm(y ~ x, data = d))
+      plot_ly(d, x = ~x) %>%
+        add_markers(y = ~y) %>%
+        add_lines(y = ~yhat) %>%
+        layout(xaxis = list(title = s[["x"]]), 
+               yaxis = list(title = s[["y"]]), 
+               showlegend = FALSE)
+    } else {
+      plotly_empty()
+    }
+  })
+```
+
+### Heatmap
+
+```{r}
+plotlyOutput("heat")
+```
+
+### Scatter plot
+
+```{r}
+plotlyOutput("scatterplot")
+```
+
+
+
+Column {data-width=400}
+-------------------------------------
+   
+### Data
+
+```{r}
+verbatimTextOutput("selection")
+```
+
+

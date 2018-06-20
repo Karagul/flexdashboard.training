@@ -1,0 +1,88 @@
+---
+title: "Exercise_01"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny    
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+```{r}
+numericInput("nrows", "Number of rows", 10, max = 50)
+```
+
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Table A
+
+```{r}
+renderTable({
+    head(cars, input$nrows)
+  })
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+renderPlot({
+    plot(head(cars, input$nrows))
+})
+```
+
+### Chart C
+
+```{r}
+renderPlot({
+    hist(head(cars$speed, input$nrows))
+})
+```
+
+### Chart D
+
+```{r}
+renderPlot({
+    hist(cars$speed, input$nrows)
+})
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart Distance vs Speed
+
+```{r}
+renderPlot({
+    df <- head(cars, input$nrows)
+    plot(df$dist, df$speed, xlab = "dist", ylab = "speed")
+})
+```
+
+### Histogram `dist` controlled
+
+```{r}
+renderPlot({
+    hist(head(cars$dist, input$nrows))
+})
+```
+
+### Histogram `dist` all
+
+```{r}
+renderPlot({
+    hist(cars$dist, input$nrows)
+})
+```
+

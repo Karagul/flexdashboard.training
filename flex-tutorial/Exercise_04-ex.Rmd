@@ -1,0 +1,35 @@
+---
+title: "Example 04"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny     
+---
+
+```{r setup, include=FALSE}
+    # Assignment: When "rnorm" button is clicked, the plot should
+    # show a new batch of rnorm(100). When "runif" button is clicked,
+    # the plot should show a new batch of runif(100).
+
+library(flexdashboard)
+```
+
+
+
+```{r}
+actionButton("rnorm", "Normal")
+actionButton("runif", "Uniform")
+```
+
+```{r}
+
+```
+
+
+```{r}
+renderPlot({
+    hist(rnorm(100))
+})    
+```
+
