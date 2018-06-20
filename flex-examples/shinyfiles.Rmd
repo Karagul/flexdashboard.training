@@ -1,0 +1,88 @@
+---
+title: "MBAL"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+runtime: shiny
+---
+
+NOTE.
+The selection of file or folders does not work in FlexDashboard.
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shinyFiles)
+
+```
+
+
+```{r}
+volumes <- c('R Installation'= R.home())
+# choose.dir(default = "", caption = "Select folder")
+
+ library(rJava)
+ library(rChoiceDialogs)
+ getwd()
+ # [1] "C:/Users/Root/Documents"
+ jchoose.dir()  # opens the dialog window in "C:\\Users\\Root\\Documents"
+```
+
+
+
+
+Model selection
+=================================================================
+
+Inputs {.sidebar}
+-----------------------------------------------------------------
+Select the folder with MBAL model files.
+
+For the test, we will provide the package folder `models`, and th MBAL installation folder.
+
+```{r}
+
+shinyFilesButton('files', 'File select', 'Please select a file', 
+                         multiple = TRUE)
+
+
+tags$p()
+tags$p('The file selection button allows the user to select one or
+               single-file mode and the default path has been set to the "library"
+               subdirectory of the "R Installation" path.')
+
+shinyDirButton('directory', 'Folder select', 'Please select a folder')
+
+tags$p()
+tags$p('This button lets the user navigate the file system and select a
+               missing write permissions is selected. Lastly it is possible to
+               create folders on the fly')
+```
+
+```{r}
+library(shinyFiles)
+
+
+```
+
+Row
+-----------------------------------------------------------------------
+
+```{r}
+shinyFileChoose(input, 'files', roots = volumes, 
+                    restrictions=system.file(package='base'))
+
+output$filepaths     <- renderPrint({parseFilePaths(volumes, input$files)})
+verbatimTextOutput('filepaths')
+```
+
+Row
+-----------------------------------------------------------------------
+
+```{r}
+shinyDirChoose(input, 'directory', roots=volumes,
+               restrictions=system.file(package='base'))
+
+output$directorypath <- renderPrint({parseDirPath(volumes, input$directory)})
+verbatimTextOutput('directorypath')
+```

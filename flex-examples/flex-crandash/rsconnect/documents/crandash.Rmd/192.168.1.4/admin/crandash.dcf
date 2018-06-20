@@ -1,0 +1,12 @@
+name: crandash
+title: crandash
+username: admin
+account: admin
+server: 192.168.1.4
+hostUrl: http://192.168.1.4:3939/__api__
+appId: 10
+bundleId: 9
+url: http://192.168.1.4:3939/content/10/
+when: 1528542674.57712
+asMultiple: FALSE
+asStatic: FALSE

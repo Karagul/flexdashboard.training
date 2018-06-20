@@ -1,0 +1,40 @@
+---
+title: "Download Button in Wrong Panel"
+output: 
+  flexdashboard::flex_dashboard:
+    vertical_layout: scroll
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+```
+
+
+# Inputs {.sidebar}
+
+```{r input}
+
+fileInput("file1", "Choose CSV File",
+                multiple = TRUE,
+                accept = c("text/csv",
+                         "text/comma-separated-values,text/plain",
+                         ".csv"))
+
+
+```
+
+
+Outputs
+-----------------------------------------------------------------------
+
+### List of Customers
+
+```{r output}
+MyData <- reactive({ input$file1 })
+
+renderPrint(MyData)
+```
+
+

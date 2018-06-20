@@ -1,0 +1,91 @@
+
+---
+title: "R Dashboard - Titanic Survival Rates"
+author: "by Anupama Rajaram"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    theme: journal
+    runtime: shiny
+   # default ,cerulean,journla, flatly,readable, spacelab, united, cosmo,
+   # lumen, paper, sandstone, simplex, yeti
+   # social: menu
+   # source_code: embed
+---
+
+```{r setup, include=FALSE}
+library(rbokeh)
+library(flexdashboard)
+library(data.table)
+library(shiny)
+library(ggplot2)
+
+loandf <- data.frame(fread("loandata_for_dashboard.csv",
+                           stringsAsFactors = FALSE))
+loandf <- loandf[1:16000,]
+
+```
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+selectInput('xcol', 'X Variable', colnames(loandf[, c(4,5,6,8,12)]))
+    
+selectInput('ycol', 'Y Variable', colnames(loandf[, c(4,5,6,8,12)]))
+
+# Combine the selected variables into a new data frame
+selectedData <- reactive({
+  renderText(paste("Relation between", input$xcol, "and", input$ycol))
+})
+
+
+```
+
+
+Column {data-width=1200}
+-----------------------------------------------------------------------
+
+### Charts - Loan DataSet - Relationships among Variables
+
+```{r}
+
+selectedData <- reactive({
+  loandf[, c(input$xcol, input$ycol)]
+})
+
+
+renderPlot({
+  
+  plot(selectedData())
+       
+})
+```
+
+
+Column {data-width=1200}
+-----------------------------------------------------------------------
+
+### Interest Rates by Credit Utilization 
+```{r}
+figure(width = 1200, height = NULL, legend_location = NULL) %>%
+  ly_quantile(loan_amnt, group = grade, data = loandf)
+```
+
+
+### Interest Rates by Loan Amount and Loan-Grade
+```{r}
+figure(width = 800, height = NULL, legend_location = "top_left") %>%
+  ly_points(loan_amnt, empl, data = loandf, color = "empl")
+
+
+# ggplot(data=titanicdf, aes(x=Survived)) +
+#   geom_bar(colour="black", fill="skyblue") +
+#   ylab('Count') +
+#   facet_wrap(~Gender)
+```
+
+
+
+
+

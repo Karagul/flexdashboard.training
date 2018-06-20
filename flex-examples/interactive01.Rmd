@@ -1,0 +1,85 @@
+---
+runtime: shiny
+output: html_notebook
+---
+
+
+## R Markdown
+The previous article, Introduction to R Markdown, described how to write R Markdown files. R Markdown files are useful because
+
+They are quick and easy to write.
+You can embed executable R code into your file, which saves manual labor and creates a reproducible report.
+You can convert R Markdown files into HTML, PDF, and Word documents with the click of a button.
+You can convert R Markdown files into ioslides and beamer slideshows with the click of a button.
+In fact, R Markdown files are the ultimate R reporting tool.
+
+This article will show you one more thing that R Markdown files can do: you can embed Shiny components in an R Markdown file to create an interactive report or slideshow.
+
+Your report will be a complete Shiny app. In fact, R Markdown provides the easiest way to build light-weight Shiny apps. I will refer to apps that combine Shiny with R Markdown as interactive documents.
+
+
+## Interactive documents
+You can make an R Markdown document interactive in two steps:
+
+add runtime: shiny to the document’s YAML header.
+add Shiny widgets and Shiny render functions to the file’s R code chunks
+The rmarkdown package will compile your document into a reactive Shiny app. The document will look just as it would otherwise, but it will include reactive components.
+
+## `runtime: shiny`
+Notify rmarkdown that your file contains Shiny components by adding runtime: shiny to the file’s YAML header. RStudio will change its “Knit” icon to a “Run Document” icon when you save this change.
+
+
+### Here are two Shiny widgets
+
+```{r echo = FALSE}
+selectInput("n_breaks", label = "Number of bins:",
+              choices = c(10, 20, 35, 50), selected = 20)
+  
+sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+              min = 0.2, max = 2, value = 1, step = 0.2)
+```
+
+
+
+## Rendered output
+To add reactive output to your document, call one of the render* functions below in an R code chunk.
+
+render function	creates
+`renderImage`	images (saved as a link to a source file)
+`renderPlot`	plots
+`renderPrint`	any printed output
+`renderTable`	data frame, matrix, other table like structures
+`renderText`	character strings
+`renderUI`	a Shiny tag object or HTML
+
+R Markdown will include the rendered output in the result of the code chunk.
+
+This output will behave like rendered output in a standard Shiny app. The output will automatically update whenever you change a widget value or a reactive expression that it depends on.
+
+The file below uses renderPlot to insert a histogram that reacts to the two widgets.
+
+
+### ...that build a histogram.
+
+```{r echo = FALSE}
+renderPlot({
+  hist(faithful$eruptions, probability = TRUE, 
+       breaks = as.numeric(input$n_breaks),
+       xlab = "Duration (minutes)", 
+       main = "Geyser eruption duration")
+  
+  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  lines(dens, col = "blue")
+})
+```
+
+
+
+## Sharing interactive documents
+Interactive documents are a type of Shiny app, which means that you can share them in the same way that you share other Shiny apps. You can
+
+* Email a .Rmd file to a colleague. He or she can run the file locally by opening the file and clicking “Run Document”
+* Host the document with Shiny Server or Shiny Server Pro
+* Host the document at ShinyApps.io
+
+Note: If you are familiar with R Markdown, you might expect RStudio to save an HTML version of an interactive document in your working directory. However, this only works with static HTML documents. Each interactive document must be served by a computer that manages the document. As a result, interactive documents cannot be shared as a standalone HTML file.

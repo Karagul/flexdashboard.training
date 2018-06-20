@@ -1,0 +1,135 @@
+---
+title: "Tableau style Storyboards in R"
+output: 
+  flexdashboard::flex_dashboard:
+    storyboard: true
+    social: menu
+    # source: embed
+    runtimme: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(quantmod)   # get stock prices; useful stock analysis functions
+library(xts)        # working with extensible time series 
+library(tidyverse) 
+library(data.table)
+library(shiny)
+library(ggplot2)
+
+loandf <- data.frame(fread("loandata_for_dashboard.csv",
+                           stringsAsFactors = FALSE))
+loandf <- loandf[1:16000,]
+
+end_date <- as.character(Sys.Date() - 1) 
+
+
+# get stockdata for facebook:
+getSymbols.yahoo('FB', env = globalenv(), return.class = 'xts', 
+                 from = '2013-01-01', 
+                 to = end_date)
+```
+
+
+
+### Dygraphs - Perfect for charting interactive time-series data in R. Used here for plotting facebook stock data.
+
+```{r}
+library(dygraphs)
+# dygraph(nhtemp, main = "New Haven Temperatures") %>% 
+#   dyRangeSelector(dateWindow = c("1920-01-01", "1960-01-01"))
+
+dygraph(FB, main = "Facebook Stock Price 2013 - present") %>% 
+  dyRangeSelector(dateWindow = c("2013-01-01", end_date))
+```
+
+***
+
+Explanation:
+
+1) We use the package dygraphs to plot a timeseries object. In this case, it is the stock value for Facebook. (ticker symbol = FB)
+
+2) Move the slider in the bottom to select the timeframe of interest.
+
+3) Hover on the timeseries line to see exact values of the stock on a particular date.
+
+4) Note that the latest Facebook stock data itself is pulled in from Yahoo! website using the quantmod package function - getSymbols.yahoo() 
+
+
+
+### Graph of loan interest rates based on loan grade. See how the interest rates increase with a worse grade.
+
+```{r}
+# library(leaflet)
+# leaflet() %>%
+#   addTiles() %>%
+#   addMarkers(lng=174.768, lat=-36.852, popup="The birthplace of R")
+
+
+qplot(loandf$int_rate, loandf$grade, xlab = "Loan interest Rate",
+      ylab = "Loan Grade (A to  G)")
+```
+
+***
+
+The loan grades are rated on a scale of A to G, with A being the least risky and G being the highest probability of defaults.
+
+
+
+
+
+
+### Plotly - leverages the plotly.js library to convert ggplot2 graphics into interactive web-friendly versions.
+
+```{r}
+# library(plotly)
+# p <- ggplot(data = diamonds, aes(x = cut, fill = clarity)) +
+#             geom_bar(position = "dodge")
+# ggplotly(p)
+
+
+library(plotly)
+p <- ggplot(data = loandf, aes(x = grade, fill = empl)) +
+            geom_bar(position = "dodge")
+ggplotly(p)
+```
+
+***
+
+Interaction:
+
+1) The usage of package ggplot2 allows us to convert graphs to interactive, data rich visuals perfect for presentations or publishing on the web! 
+The tooltips can be used to convey additional data. 
+
+2) Hover over the graph to see more details. Or use the icons to zoom in/out , save the image and much more!
+
+
+
+
+### d3heatmap - Interactive heatmaps.
+
+```{r}
+library(d3heatmap)
+d3heatmap(mtcars, scale="column", colors="Reds")
+```
+
+***
+
+Interaction with Heatmap:
+
+1) To view the heatmap in more details, click on any row or column by clicking axis labels.
+
+2) Hover over any of the cells to see the values.
+
+3) The use of d3heatmap package allows us to see the dendograms (tree chart). 
+So from left to right, the cars were classified by the values on the x-axis. 
+Hence we first divide the cars by number of cylinder (4 or 6), then each cylinder type is further divided by Transmission (am variable - 0 for automatic or 1 for manual), then V/S (0 or 1), and so on.
+
+
+
+
+
+
+
+
+

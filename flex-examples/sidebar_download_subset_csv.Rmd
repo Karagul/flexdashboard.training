@@ -1,0 +1,61 @@
+---
+title: "Download Button in Wrong Panel"
+output: 
+  flexdashboard::flex_dashboard:
+    vertical_layout: scroll
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+
+## Setting up required libraries
+library(flexdashboard)
+library(dplyr)
+library(shiny)
+library(knitr)
+
+dataset <- read.csv("maintenance_data.csv", sep = ";")
+```
+
+Inputs {.sidebar}
+-----------------------------------------------------------------------
+
+### Input Filters
+
+```{r input}
+
+## Metric 1
+selectInput('metric',
+            'Choose Metric',
+            names(dataset %>% 
+                      select(-provider)),
+            selected = "default_metric")
+
+## Download Button
+downloadButton('downloadData', 'Download Result Set')
+```
+
+Outputs
+-----------------------------------------------------------------------
+
+### List of Customers
+
+```{r output}
+
+subset_dataset <- reactive({
+  dataset[, c("provider", input$metric)]
+})
+
+renderTable({
+  subset_dataset()
+},
+include.rownames = FALSE)
+
+downloadHandler(filename = function() {
+     paste('resultset-', Sys.Date(), '.csv', sep='')
+   },
+     content = function(file) {
+     write.csv(subset_dataset(), file, row.names = FALSE)
+   }
+)
+```
