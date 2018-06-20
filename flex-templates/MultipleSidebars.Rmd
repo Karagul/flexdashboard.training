@@ -1,0 +1,79 @@
+---
+title: "Multiple Sidebars"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    theme: journal
+    css: styles_dashboard.css
+runtime: shiny
+---
+
+
+
+Sidebar {.sidebar}
+--------------
+```{r}
+h3("Sidebar 1")
+```
+
+
+Row
+--------------
+
+### Recommended Resort
+
+### Snow Forecast
+
+
+Row
+-----------
+
+### Weather
+
+### Base
+
+### Runs
+
+Acknowledgement {data-height=2}
+------------
+![](sclogo.png) ![](wulogo.jpg) ![](rslogo.png) <br>
+Data Courtesy of Snocountry and Weather Underground. Report by RStudio. <br>
+Not to be used for commercial purposes.
+
+###
+
+Specific Resort
+=======================
+
+Sidebar {.sidebar}
+--------------------
+```{r}
+h3("Sidebar 2")
+```
+
+Summary {data-height=30}
+----------
+
+
+### Last 48 Hours {data-width=30}
+
+### Base {data-width=30}
+
+### Weather {data-width=30}
+
+
+Charts {data-height=70}
+------------
+
+### Snow Forecast
+
+### Runs
+
+Acknowledgement {data-height=2}
+------------
+![](sclogo.png) ![](wulogo.jpg) ![](rslogo.png) <br>
+Data Courtesy of Snocountry and Weather Underground. Report by RStudio. <br>
+Not to be used for commercial purposes.
+
+### {.no-title}
+

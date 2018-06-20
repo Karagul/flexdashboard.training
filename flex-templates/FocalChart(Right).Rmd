@@ -1,0 +1,32 @@
+---
+title: "Focal Chart (Right)"
+output: flexdashboard::flex_dashboard
+---
+    
+Column {data-width=300}
+-------------------------------------
+    
+### Chart 1
+    
+```{r}
+```
+
+### Chart 2
+
+```{r}
+```  
+
+### Chart 4
+
+```{r}
+```  
+   
+Column {data-width=800}
+-------------------------------------
+   
+ 
+ 
+### Chart 4
+    
+```{r}
+```

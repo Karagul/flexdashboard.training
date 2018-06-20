@@ -1,0 +1,51 @@
+---
+title: "Hybrid OA Journal Monitor"
+output: 
+  flexdashboard::flex_dashboard:
+    navbar:
+      - { title: "About"}
+    orientation: rows
+    vertical_layout: fill
+runtime: shiny
+---
+
+Overview
+=================================================================
+
+Inputs {.sidebar}
+-----------------------------------------------------------------
+
+
+
+
+Row
+-----------------------------------------------------------------------
+
+### Publishers selected
+
+
+### Journals selected
+
+
+### Hybrid OA articles indexed in Crossref
+
+
+
+
+Column {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Hybrid OA Licenses found (relative)
+
+### Hybrid OA Licenses found (absolute)
+
+
+
+Row {data-width=400 data-height=350}
+-------------------------------------
+
+### Crossref Indexing Coverage vs Spending Information available via Open APC
+
+
+### Institutional spending per country (in percent)
+

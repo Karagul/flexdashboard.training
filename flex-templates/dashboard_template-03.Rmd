@@ -1,0 +1,100 @@
+---
+title: "Hybrid OA Journal Monitor"
+output: 
+  flexdashboard::flex_dashboard:
+    navbar:
+      - { title: "About"}
+    orientation: rows
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(readr)
+library(ggplot2)
+library(plotly)
+library(dplyr)
+library(scales)
+library(ggalt)
+```
+
+
+```{r global}
+# access to data
+
+```
+
+
+Overview
+=================================================================
+
+Inputs {.sidebar}
+-----------------------------------------------------------------
+
+```{r}
+# inputs here
+
+```
+
+
+Row
+-----------------------------------------------------------------------
+
+### Publishers selected
+
+```{r}
+# renderValueBox and valueBox here
+```
+
+
+### Journals selected
+
+```{r}
+# renderValueBox and valueBox here
+```
+
+
+### Hybrid OA articles indexed in Crossref
+
+```{r}
+# renderValueBox and valueBox here
+```
+
+
+
+Column {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+
+### Hybrid OA Licenses found (relative)
+
+```{r}
+# renderPlotly and plotly::ggplotly here
+```
+
+
+### Hybrid OA Licenses found (absolute)
+
+```{r}
+# renderPlotly and plotly::ggplotly here
+```
+
+
+Row {data-width=400 data-height=350}
+-------------------------------------
+
+### Crossref Indexing Coverage vs Spending Information available via Open APC
+
+```{r}
+# renderPlotly, ggplot, plotly::ggplotly here
+```
+
+
+
+### Institutional spending per country (in percent)
+
+```{r}
+# renderPlot, ggplot, ggalt::geom_lollipop here
+```
+
+
