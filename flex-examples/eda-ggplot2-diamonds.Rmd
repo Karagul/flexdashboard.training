@@ -15,8 +15,7 @@ library(mgcv)
 dataset <- diamonds
 ```
 
-Inputs {.sidebar}
------------------------------------------------------------------------
+## Inputs {.sidebar}
 
 ```{r}
 sliderInput('sampleSize', 'Sample Size', min=1, max=nrow(dataset),
@@ -35,8 +34,7 @@ selectInput('facet_col', 'Facet Column',
             c(None='.', names(diamonds[sapply(diamonds, is.factor)])))
 ```
 
-Outputs
------------------------------------------------------------------------
+## Outputs
 
 ### Diamonds
 
