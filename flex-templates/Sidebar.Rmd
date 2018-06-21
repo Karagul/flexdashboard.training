@@ -8,7 +8,6 @@ Inputs {.sidebar}
 -------------------------------------
 
 ```{r}
-source("global.R")
 # shiny inputs defined here
 ```
  

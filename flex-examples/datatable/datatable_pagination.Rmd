@@ -1,0 +1,37 @@
+---
+title: "Datatable Pagination"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+Inputs {.sidebar}
+-------------------------------------
+
+```{r}
+# shiny inputs defined here
+checkboxInput("paging", "Paginate table")
+```
+ 
+
+## Column
+    
+### Data Table
+    
+```{r}
+
+makeTable <- reactive({
+    DT::datatable(
+        { data.frame(x= 1:100, y = input$paging)},   # Some dummy data
+        options= list(
+            paging = input$paging
+        )
+    )
+})
+# Render the datatable returned by the reactive function
+output$table <- DT::renderDataTable( makeTable() )
+
+DT::dataTableOutput("table")
+
+
+```
+    
