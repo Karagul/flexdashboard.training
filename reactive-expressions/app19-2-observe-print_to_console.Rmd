@@ -1,0 +1,31 @@
+---
+title: "ObserveEvent"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+# Inputs
+
+## Column
+
+```{r}
+# shiny inputs defined here
+basicPage(
+  h3("If there is a reactive value the code will run on app load and then on each change"),
+  h4("See the console"),
+  textInput("mytext", "Type and see the console"),
+  h5("the sequence will print anytime that there is a change in mytext")
+)
+```
+ 
+    
+```{r}
+  observe({
+    input$mytext
+    # will only run when the app loads, never again
+    print(1:10)     #: prints ONLY to the console not the web page
+  })
+```
+    
+    
+    

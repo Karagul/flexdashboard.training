@@ -1,0 +1,63 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny      
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+# Page 1
+
+## Column
+
+```{r}
+basicPage(
+  h3("The value in the text box gets printed below with the textOutput function."),
+  textInput("mytext", "this is the input box"),
+  
+  "The value typed is:",
+  textOutput("my_text_output")
+)
+```
+
+
+
+```{r}
+  txt <- renderText({           #: the function
+    return(input$mytext)
+  })
+  
+  output$my_text_output <- txt  #: calling the function
+```
+
+
+# Page 2
+
+## Column
+
+### Box 1
+
+```{r}
+  h3("The value in the text box gets printed below with the textOutput function.")
+  textInput("mytext_2", "this is the input box")
+```
+
+
+### Box 2
+
+```{r}
+  txt_2 <- renderText({           #: the function
+    return(input$mytext_2)
+  })
+
+  HTML("The value typed is:")
+  
+  output$my_text_output_2 <- txt_2  #: calling the function
+  textOutput("my_text_output_2")
+```
+

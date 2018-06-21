@@ -1,0 +1,90 @@
+---
+title: "renderUI"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny    
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+
+# Page 1
+
+## Column
+
+```{r}
+basicPage(
+  h3("Using renderUI and uiOutput"),
+  uiOutput("my_output_UI"),
+  textInput("mytext", ""),
+  actionButton("mybutton", "Click to add to selections")
+)
+```
+
+
+
+```{r}
+# return a list of UI elements
+output$my_output_UI <- renderUI({
+    list(
+        h4(style = "color:blue;", "My selection list"),
+        selectInput(inputId = "myselect", label="", choices = selections)
+    )
+})
+    
+    # initial selections
+    selections <- c("New York", "Philadelphia")
+    
+    # use observe event to notice when the user clicks the button
+    # update the selection list. Note the double assignment <<-
+    observeEvent(input$mybutton, {
+        selections <<- c(input$mytext, selections)
+        updateSelectInput(session, "myselect", choices = selections, selected = selections[1])
+    })
+```
+
+
+# Page 2
+
+## Column 1
+
+
+```{r}
+h3("Using renderUI and uiOutput")
+uiOutput("my_output_UI_2")
+textInput("mytext_2", "")
+actionButton("mybutton_2", "Click to add to selections")
+```
+
+
+```{r}
+# return a list of UI elements
+output$my_output_UI_2 <- renderUI({
+    list(
+        h4(style = "color:blue;", "My selection list"),
+        selectInput(inputId = "myselect_2", label="", choices = selections)
+    )
+})
+```
+
+
+```{r}
+    # initial selections
+    selections <- c("New York", "Philadelphia")
+    
+    # use observe event to notice when the user clicks the button
+    # update the selection list. Note the double assignment <<-
+    observeEvent(input$mybutton_2, {
+        selections <<- c(input$mytext_2, selections)
+        updateSelectInput(session, "myselect_2", choices = selections, selected = selections[1])
+    })
+```
+
+
+## Column 2
+
+## Column 3
