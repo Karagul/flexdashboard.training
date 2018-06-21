@@ -1,0 +1,37 @@
+---
+title: "ObserveEvent"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+# Inputs
+
+## Column
+
+```{r}
+# shiny inputs defined here
+basicPage(
+  h3("The `reactive` generates a string output which is added to the results text box"),
+  textInput("mytext", "Input goes here"),
+  textInput("myresults", "Results will be printed here", "")
+)
+```
+ 
+    
+```{r}
+  # this is my reactive function -- I'm using it to
+  # isolate reactions related to the text box
+  mystring <- reactive({
+    paste(input$mytext, " is what the user types")
+  })
+  
+  observe({
+    # The reactive will run each time the textbox changes and
+    # print results to the console.
+    txt <- mystring()
+    updateTextInput(session, inputId = "myresults", value = txt) 
+  })
+```
+    
+    
+    
