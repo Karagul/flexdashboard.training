@@ -1,0 +1,40 @@
+---
+title: "Observer"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+---
+
+# Inputs
+
+## Column
+
+```{r}
+# shiny inputs defined here
+h3("The results text box gets updated if you change the other text box OR the slider.")
+sliderInput("myslider", "A slider:", min=0, max=1000, value=500)
+textInput("mytext", "Input goes here", value = "Initial value")
+textInput("myresults", "Results will be printed here")
+```
+ 
+    
+```{r}
+# the_sample <- reactive({
+#     picked <- as.integer(input$myslider)
+#     sample(1:picked, 1)
+# })
+
+observe({
+    # even though the slider is not involved in a calculation, if
+    # you change the slider it will run all this code and update the text box
+    # changes to the mytext box also will trigger the code to run
+    input$myslider
+    # the_sample <- sample(1:as.integer(input$myslider), 1)
+    picked <- 10000
+    # picked <- input$myslider
+    txt <- paste(input$mytext, sample(1:picked, 1))
+    updateTextInput(session, inputId = "myresults", value = txt)  
+})
+```
+    
+    
+    
