@@ -51,13 +51,13 @@ basicPage(
 ### Box 2
 
 ```{r}
-  txt_2 <- renderText({           #: the function
-    return(input$mytext_2)
-  })
+txt_2 <- renderText({           #: the function
+  return(input$mytext_2)
+})
 
-  HTML("The value typed is:")
-  
-  output$my_text_output_2 <- txt_2  #: calling the function
-  textOutput("my_text_output_2")
+HTML("The value typed is:")
+
+output$my_text_output_2 <- txt_2  #: calling the function
+textOutput("my_text_output_2")
 ```
 
