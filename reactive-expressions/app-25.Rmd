@@ -54,7 +54,7 @@ output$my_output_UI <- renderUI({
 
 
 ```{r}
-h3("Using renderUI and uiOutput")
+h3("Without renderUI and uiOutput")
 uiOutput("my_output_UI_2")
 textInput("mytext_2", "")
 actionButton("mybutton_2", "Click to add to selections")
