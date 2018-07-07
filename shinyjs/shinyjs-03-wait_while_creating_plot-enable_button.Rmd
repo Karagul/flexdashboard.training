@@ -1,0 +1,48 @@
+---
+title: "Wait to enable button"
+output: 
+    flexdashboard::flex_dashboard:
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(shinyjs)
+```
+
+# Inputs {.sidebar}
+
+```{r, echo=FALSE}
+# the "useShinyjs(rmd = TRUE)" has to be next to the inputs
+useShinyjs(rmd = TRUE)
+
+# inputs
+sliderInput("obs", "Number of observations:", min = 10, max = 1000, value = 2000)
+actionButton("button", "OK!")
+```
+
+
+# Page 1
+
+## tab
+
+### box
+
+```{r}
+PlotData <- eventReactive(input$button,{
+    shinyjs::disable("button") 
+    Sys.sleep(4)
+    hist(rnorm(input$obs), col = 'darkgray', border = 'white')
+    shinyjs::enable("button") 
+  })
+```
+
+
+```{r}
+renderPlot({
+    PlotData()
+  })
+```
+
+

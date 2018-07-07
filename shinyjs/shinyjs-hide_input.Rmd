@@ -1,0 +1,43 @@
+---
+title: "Test Sidebar"
+output: 
+    flexdashboard::flex_dashboard:
+        orientation: rows
+runtime: shiny
+---
+
+```{r setup}
+library(flexdashboard)
+library(shiny)
+library(shinyjs)
+
+```
+
+Sidebar {.sidebar data-width=250}
+=======================================================================
+
+```{r}
+useShinyjs(rmd = TRUE)
+
+div(id = "one", selectInput("one",label= "Show Always",choices=c("a","b","c")))    
+div(id = "two", selectInput("two",label = "Show only on Tab 1",
+                            choices=c("d","e","f")))
+```
+
+<!-- Update the sidebar based on the tab chosen. Generated HTML code shown for tabs-->
+
+Tab 1 <!-- <a href="#section-tab-1" aria-expanded="true" data-toggle="tab"> -->
+=======================================================================
+```{r}
+shinyjs::onclick("#section-tab-2", shinyjs::hide(id = "two"))
+shinyjs::onclick("#section-tab-1", shinyjs::show(id = "two"))
+```
+
+Tab 2 <!-- <a href="#section-tab-2" aria-expanded="true" data-toggle="tab"> -->
+=======================================================================
+```{r}
+# actionButton("hideSlider", "Hide Input Two")
+# observeEvent(input$hideSlider, {
+#      shinyjs::toggle(id = "two", anim = TRUE)
+#     })
+```
