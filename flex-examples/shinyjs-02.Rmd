@@ -1,0 +1,23 @@
+---
+title: "without ui and server"
+output: 
+    flexdashboard::flex_dashboard:
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(shiny)
+library(shinyjs)
+```
+
+## Inputs {.sidebar}
+
+```{r, echo=FALSE}
+useShinyjs(rmd = TRUE)
+disabled(textInput("id", "Id", "0"))
+textInput("X1", "X1", "")
+
+#action buttons
+actionButton("submit", "Submit Changes")
+```
